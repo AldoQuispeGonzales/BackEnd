@@ -1,22 +1,23 @@
-# Use Node LTS
-FROM node:20-slim
+# Dockerfile (reemplaza si quieres conservar el actual)
+FROM node:18-alpine
 
-# Create app directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy package files and install dependencies
+# copy only package files first for build cache
 COPY package*.json ./
-# Install both dependencies and devDependencies are not necessary in production,
-# but nodemon not needed. We install production deps only for smaller image.
-RUN npm ci --only=production
 
-# Copy source
-COPY . .
+# install only production deps
+RUN npm ci --only=production --silent
 
-# Expose port
+# copy rest of the source
+COPY --chown=node:node . .
+
+# run as non-root user
+USER node
+
+ENV NODE_ENV=production
+ENV PORT=3000
+
 EXPOSE 3000
 
-# Environment default
-ENV NODE_ENV=production
-
-CMD [ "node", "src/server.js" ]
+CMD ["node", "server.js"]

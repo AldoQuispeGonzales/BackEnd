@@ -10,7 +10,7 @@ const options = {
             description: 'CRUD de productos - Node.js + Express'
         },
         servers: [
-            { url: 'http://localhost:3000', description: 'Local' }
+            { url: '/', description: 'Servidor actual' }
         ]
     },
     // usar path.resolve para rutas absolutas

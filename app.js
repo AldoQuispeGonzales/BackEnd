@@ -1,20 +1,30 @@
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const productoRoutes = require('./routes/productoRoutes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
 
-dotenv.config();
+// Cargar .env solo en desarrollo
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// Rutas
+// Rutas principales
 app.use('/api/productos', productoRoutes);
 
-// Swagger UI
+app.get('/debug/env', (req, res) => {
+    res.json({
+        DB_HOST: process.env.DB_HOST,
+        DB_PORT: process.env.DB_PORT
+    });
+});
+
+// Swagger activado siempre (solo para pruebas)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Healthcheck
